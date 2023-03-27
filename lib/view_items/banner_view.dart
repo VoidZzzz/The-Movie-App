@@ -1,40 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:the_movie_app/data/data.vos/movie_vo.dart';
+import 'package:the_movie_app/network/api_constants.dart';
 import 'package:the_movie_app/resources/colors.dart';
 import 'package:the_movie_app/resources/dimens.dart';
 import 'package:the_movie_app/widgets/gradient_view.dart';
 import '../widgets/play_button_view.dart';
 
 class BannerView extends StatelessWidget {
-  const BannerView({Key? key}) : super(key: key);
+  final Function onTapBanner;
+  final MovieVO? movie;
+  const BannerView({super.key, required this.onTapBanner, required this.movie});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: const [
-        Positioned.fill(
-          child: BannerImageView(),
-        ),
-        Positioned.fill(
-          child: GradientView(),
-        ),
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: BannerTitleView(),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: PlayButtonView(),
-        )
-      ],
+    return GestureDetector(
+      onTap: (){onTapBanner();},
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: BannerImageView(imageUrl: movie?.posterPath ?? "",),
+          ),
+          const Positioned.fill(
+            child: GradientView(),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: BannerTitleView(movieTitle: movie?.title ?? "",),
+          ),
+          const Align(
+            alignment: Alignment.center,
+            child: PlayButtonView(),
+          )
+        ],
+      ),
     );
   }
 }
 
 
 class BannerTitleView extends StatelessWidget {
-  const BannerTitleView({
-    Key? key,
-  }) : super(key: key);
+  final String movieTitle;
+  const BannerTitleView({super.key, required this.movieTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +49,15 @@ class BannerTitleView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
-        children: const [
+        children: [
           Text(
-            "The Wolverine 2023.",
+            movieTitle,
             style: TextStyle(
                 color: Colors.white,
                 fontSize: TEXT_HEADING_1X,
                 fontWeight: FontWeight.w500),
           ),
-          Text(
+          const Text(
             "Official",
             style: TextStyle(
                 color: Colors.white,
@@ -65,14 +71,13 @@ class BannerTitleView extends StatelessWidget {
 }
 
 class BannerImageView extends StatelessWidget {
-  const BannerImageView({
-    Key? key,
-  }) : super(key: key);
+  final String imageUrl;
+  const BannerImageView({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
     return Image.network(
-      "https://assets.reedpopcdn.com/Deadpool_Wolverine_Headline.jpg/BROK/resize/1200x1200%3E/format/jpg/quality/70/Deadpool_Wolverine_Headline.jpg",
+      "$IMAGE_BASE_URL$imageUrl",
       fit: BoxFit.cover,
     );
   }

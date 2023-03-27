@@ -1,33 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:the_movie_app/widgets/raing_view.dart';
+import 'package:the_movie_app/network/api_constants.dart';
+import 'package:the_movie_app/widgets/rating_view.dart';
+import '../data/data.vos/movie_vo.dart';
 import '../resources/dimens.dart';
 
 class MovieView extends StatelessWidget {
-  const MovieView({Key? key}) : super(key: key);
+  final MovieVO? movie;
+  const MovieView({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(right: MARGIN_MEDIUM),
-      width: LIST_ITEM_WIDTH,
+      width: MOVIE_LIST_ITEM_WIDTH,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(
-            "https://assets.reedpopcdn.com/Deadpool_Wolverine_Headline.jpg/BROK/resize/1200x1200%3E/format/jpg/quality/70/Deadpool_Wolverine_Headline.jpg",
+          Image.network("$IMAGE_BASE_URL${movie?.posterPath ?? ""}",
             fit: BoxFit.cover,
-            height: 200,
+            height: 197,
           ),
           const SizedBox(height: MARGIN_MEDIUM),
-          const Text(
-            "West World",
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: TEXT_REGULAR_2X,
-                fontWeight: FontWeight.w600),
+          SizedBox(width: 131,
+            child: Text(
+              movie?.title?? "",
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: TEXT_REGULAR_2X,
+                  fontWeight: FontWeight.w600),
+            ),
           ),
-          const SizedBox(height: MARGIN_MEDIUM),
+          const SizedBox(height: MARGIN_MEDIUM - 5),
           Row(
             children: const [
               Text(

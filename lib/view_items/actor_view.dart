@@ -1,50 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:the_movie_app/network/api_constants.dart';
 import 'package:the_movie_app/resources/colors.dart';
 
+import '../data/data.vos/actor_vo.dart';
 import '../resources/dimens.dart';
 
 class ActorView extends StatelessWidget {
-  const ActorView({Key? key}) : super(key: key);
+  final ActorVO? actor;
+  const ActorView({super.key, required this.actor});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: MARGIN_MEDIUM),
-      child: Container(
-        width: MOVIE_LIST_HEIGHT,
-        color: Colors.red,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: ActorImageView(),
+    return Container(
+      margin: const EdgeInsets.only(right: MARGIN_MEDIUM),
+      width: ACTORS_LIST_ITEMS_WIDTH,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ActorImageView(actorProfilePath: actor?.profilePath ?? "",),
+          ),
+          const Padding(
+            padding: EdgeInsets.all(MARGIN_MEDIUM),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: FavouriteButtonView(),
             ),
-            Padding(
-              padding: const EdgeInsets.all(MARGIN_MEDIUM),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: FavouriteButtonView(),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: ActorNameAndLikeView(),
-            )
-          ],
-        ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ActorNameAndLikeView(actorName: actor?.name ?? "",),
+          )
+        ],
       ),
     );
   }
 }
 
 class ActorImageView extends StatelessWidget {
-  const ActorImageView({
-    Key? key,
-  }) : super(key: key);
+  final String actorProfilePath;
+  const ActorImageView({super.key, required this.actorProfilePath});
 
   @override
   Widget build(BuildContext context) {
     return Image.network(
-      "https://harpersbazaar.com.au/wp-content/uploads/2022/11/jack-titanic.jpg",
+      "$IMAGE_BASE_URL$actorProfilePath",
       fit: BoxFit.cover,
     );
   }
@@ -57,16 +56,13 @@ class FavouriteButtonView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(Icons.favorite_border,
-      color: Colors.white
-    );
+    return const Icon(Icons.favorite_border, color: Colors.white);
   }
 }
 
 class ActorNameAndLikeView extends StatelessWidget {
-  const ActorNameAndLikeView({
-    Key? key,
-  }) : super(key: key);
+  final String actorName;
+  const ActorNameAndLikeView({super.key, required this.actorName});
 
   @override
   Widget build(BuildContext context) {
@@ -78,15 +74,15 @@ class ActorNameAndLikeView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            "Leonardo DiCarprio",
-            style: TextStyle(
+            actorName,
+            style: const TextStyle(
                 fontSize: TEXT_REGULAR,
                 color: Colors.white,
                 fontWeight: FontWeight.w700),
           ),
-          SizedBox(height: MARGIN_MEDIUM),
+          const SizedBox(height: MARGIN_MEDIUM),
           Row(
-            children: [
+            children: const [
               Icon(
                 Icons.thumb_up,
                 color: Colors.amber,
