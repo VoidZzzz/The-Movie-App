@@ -39,13 +39,13 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     /// Now Playing Movies
-    movieModel.getNowPlayingMovies(1).then((movieList) {
-      setState(() {
-        nowPlayingMovies = movieList;
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
+    // movieModel.getNowPlayingMovies(1).then((movieList) {
+    //   setState(() {
+    //     nowPlayingMovies = movieList;
+    //   });
+    // }).catchError((error) {
+    //   debugPrint(error.toString());
+    // });
 
     /// Now Playing Movies from DB
     movieModel.getNowPlayingMoviesFromDatabase().then((movieList) {
