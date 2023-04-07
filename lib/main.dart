@@ -13,8 +13,6 @@ import 'data/data.vos/movie_vo.dart';
 import 'data/data.vos/production_company_vo.dart';
 import 'data/data.vos/production_country_vo.dart';
 import 'data/data.vos/spoken_language_vo.dart';
-import 'network/data_agents/dio_movie_data_agent_impl.dart';
-import 'network/data_agents/retrofit_movie_data_agent_impl.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -46,7 +44,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
+      home: const HomePage(),
     );
   }
 }
