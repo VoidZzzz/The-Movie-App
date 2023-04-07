@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:the_movie_app/persistence/hive_constants.dart';
-
 import '../../data/data.vos/movie_vo.dart';
 
 class MovieDao {
@@ -31,7 +29,7 @@ class MovieDao {
     return getMovieBox().get(movieId);
   }
 
-  /// Reactive Programming
+  /// Reactive programming
   Stream<void> getAllMoviesEventStream() {
     return getMovieBox().watch();
   }
@@ -42,14 +40,15 @@ class MovieDao {
         .toList());
   }
 
-  Stream<List<MovieVO>> getPopularMoviesStream() {
-    return Stream.value(
-        getAllMovies().where((element) => element.isPopular ?? false).toList());
-  }
-
   Stream<List<MovieVO>> getTopRatedMoviesStream() {
     return Stream.value(getAllMovies()
         .where((element) => element.isTopRated ?? false)
+        .toList());
+  }
+
+  Stream<List<MovieVO>> getPopularMoviesStream() {
+    return Stream.value(getAllMovies()
+        .where((element) => element.isPopular ?? false)
         .toList());
   }
 
