@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:the_movie_app/data/models/movie_model_impl.dart';
+import 'package:provider/provider.dart';
+import 'package:the_movie_app/bloc/details_bloc.dart';
 import 'package:the_movie_app/network/api_constants.dart';
 import 'package:the_movie_app/resources/colors.dart';
 import 'package:the_movie_app/resources/dimens.dart';
@@ -8,111 +9,76 @@ import 'package:the_movie_app/widgets/gradient_view.dart';
 import 'package:the_movie_app/widgets/rating_view.dart';
 import 'package:the_movie_app/widgets/title_text.dart';
 import 'package:the_movie_app/resources/strings.dart';
-
 import '../data/data.vos/actor_vo.dart';
 import '../data/data.vos/movie_vo.dart';
-import '../data/models/movie_model.dart';
 
-class MovieDetailsPage extends StatefulWidget {
+class MovieDetailsPage extends StatelessWidget {
   final int movieId;
   const MovieDetailsPage({super.key, required this.movieId});
 
   @override
-  State<MovieDetailsPage> createState() => _MovieDetailsPageState();
-}
-
-class _MovieDetailsPageState extends State<MovieDetailsPage> {
-  /// Model
-  final MovieModel _movieModel = MovieModelImpl();
-
-  /// State Variable
-  MovieVO? movieDetails;
-  List<ActorVO>? cast;
-  List<ActorVO>? crew;
-
-  @override
-  void initState() {
-
-    /// Movie Details
-    // _movieModel.getMovieDetails(widget.movieId).then((movieDetails) {
-    //   setState(() {
-    //     this.movieDetails = movieDetails;
-    //   });
-    // }).catchError((error) {
-    //   debugPrint(error.toString());
-    // });
-
-    /// Movie Details from DataBase
-    _movieModel.getMovieDetailsFromDatabase(widget.movieId).then((movieDetails) {
-      setState(() {
-        this.movieDetails = movieDetails;
-      });
-    });
-
-
-    _movieModel.getCreditsByMovie(widget.movieId).then((castAndCrew) {
-      setState(() {
-        cast = castAndCrew.first;
-        crew = castAndCrew[1];
-      });
-    }).catchError((error) {
-      debugPrint(error.toString());
-    });
-
-    super.initState();
-  }
-
-  final List<String> genreList = [
-    "Action",
-    "Horror",
-    "Comedy",
-  ];
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: HOME_SCREEN_BACKGROUND_COLOR,
-        child: CustomScrollView(
-          slivers: [
-            MovieDetailsSliverAppBarView(
-              onTapBack: () => Navigator.pop(context),
-              movie: movieDetails,
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => MovieDetailsBloc(movieId),
+      child: Scaffold(
+        body: Selector<MovieDetailsBloc, MovieVO?>(
+          selector: (context, bloc) => bloc.mMovie,
+          builder: (context, movie, child) => Container(
+            color: HOME_SCREEN_BACKGROUND_COLOR,
+            child: CustomScrollView(
+              slivers: [
+                MovieDetailsSliverAppBarView(
+                  onTapBack: () => Navigator.pop(context),
+                  movie: movie,
+                ),
+                SliverList(
+                  delegate: SliverChildListDelegate(
+                    [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: MARGIN_MEDIUM_2),
+                        child: TrailerSection(
+                          storyLine: movie?.overview ?? "",
+                          genreList: movie?.getGenreListAsStringList() ?? [],
+                        ),
+                      ),
+                      const SizedBox(height: MARGIN_LARGE),
+                      Selector<MovieDetailsBloc, List<ActorVO>>(
+                        selector: (context, bloc) => bloc.mActorsList ?? [],
+                        builder: (context, actorList, child) =>
+                            ActorsAndCreatorsSectionView(
+                          titleText: MOVIE_DETAILS_SCREEN_ACTORS_TITLE,
+                          seeMoreText: "",
+                          actorList: actorList,
+                          seeMoreButtonVisibility: false,
+                        ),
+                      ),
+                      const SizedBox(height: MARGIN_LARGE),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: MARGIN_MEDIUM_2),
+                        child: AboutFilmSectionView(
+                          movieVO: movie,
+                        ),
+                      ),
+                      const SizedBox(height: MARGIN_LARGE),
+                      Selector<MovieDetailsBloc, List<ActorVO>>(
+                        selector: (context, bloc) => bloc.mCreatorsList ?? [],
+                        builder: (context, creatorList, child) => (creatorList
+                                .isNotEmpty)
+                            ? ActorsAndCreatorsSectionView(
+                                titleText: MOVIE_DETAILS_SCREEN_CREATORS_TITLE,
+                                seeMoreText:
+                                    MOVIE_DETAILS_SCREEN_CREATORS_SEE_MORE,
+                                actorList: creatorList)
+                            : Container(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: MARGIN_MEDIUM_2),
-                    child: TrailerSection(
-                      storyLine: movieDetails?.overview ?? "",
-                      genreList:
-                          movieDetails?.getGenreListAsStringList() ?? [],
-                    ),
-                  ),
-                  const SizedBox(height: MARGIN_LARGE),
-                  ActorsAndCreatorsSectionView(
-                    titleText: MOVIE_DETAILS_SCREEN_ACTORS_TITLE,
-                    seeMoreText: "",
-                    actorList: cast,
-                    seeMoreButtonVisibility: false,
-                  ),
-                  const SizedBox(height: MARGIN_LARGE),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: MARGIN_MEDIUM_2),
-                    child: AboutFilmSectionView(movieVO: movieDetails,),
-                  ),
-                  const SizedBox(height: MARGIN_LARGE),
-                  ActorsAndCreatorsSectionView(
-                      titleText: MOVIE_DETAILS_SCREEN_CREATORS_TITLE,
-                      seeMoreText: MOVIE_DETAILS_SCREEN_CREATORS_SEE_MORE,
-                      actorList: crew),
-                ],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -122,7 +88,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
 class AboutFilmSectionView extends StatelessWidget {
   final MovieVO? movieVO;
   const AboutFilmSectionView({super.key, required this.movieVO});
-  
 
   @override
   Widget build(BuildContext context) {
@@ -133,14 +98,15 @@ class AboutFilmSectionView extends StatelessWidget {
         const SizedBox(height: MARGIN_MEDIUM_2),
         AboutFilmInfoView("Original Title:", movieVO?.title ?? ""),
         const SizedBox(height: MARGIN_MEDIUM_2),
-        AboutFilmInfoView("Type:", movieVO?.getGenreListAsCommaSeparatedString() ?? ""),
+        AboutFilmInfoView(
+            "Type:", movieVO?.getGenreListAsCommaSeparatedString() ?? ""),
         const SizedBox(height: MARGIN_MEDIUM_2),
-        AboutFilmInfoView("Production:", movieVO?.getProductionCountriesAsCommaSeparatedString() ?? ""),
+        AboutFilmInfoView("Production:",
+            movieVO?.getProductionCountriesAsCommaSeparatedString() ?? ""),
         const SizedBox(height: MARGIN_MEDIUM_2),
         AboutFilmInfoView("Premiere:", movieVO?.releaseDate ?? ""),
         const SizedBox(height: MARGIN_MEDIUM_2),
-        AboutFilmInfoView("Description:",
-           movieVO?.overview?? ""),
+        AboutFilmInfoView("Description:", movieVO?.overview ?? ""),
       ],
     );
   }
@@ -150,14 +116,14 @@ class AboutFilmInfoView extends StatelessWidget {
   final String label;
   final String description;
 
-  AboutFilmInfoView(this.label, this.description);
+  const AboutFilmInfoView(this.label, this.description, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: MediaQuery.of(context).size.width / 4,
           child: Text(
             label,
@@ -195,7 +161,9 @@ class TrailerSection extends StatelessWidget {
       children: [
         MovieTimeAndGenreView(genreList: genreList),
         const SizedBox(height: MARGIN_MEDIUM_3),
-        StoryLineView(storyLine: storyLine,),
+        StoryLineView(
+          storyLine: storyLine,
+        ),
         const SizedBox(height: MARGIN_MEDIUM_2),
         Row(
           children: [
@@ -305,11 +273,11 @@ class MovieTimeAndGenreView extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         const SizedBox(width: MARGIN_MEDIUM),
-         ...genreList
-              .map(
-                (genre) => GenreChipView(genre),
-              )
-              .toList(),
+        ...genreList
+            .map(
+              (genre) => GenreChipView(genre),
+            )
+            .toList(),
         const Icon(
           Icons.favorite_border,
           color: Colors.white,
@@ -357,47 +325,53 @@ class MovieDetailsSliverAppBarView extends StatelessWidget {
       floating: true,
       expandedHeight: MOVIE_DETAILS_SCREEN_SLIVER_APP_BAR_HEIGHT,
       flexibleSpace: FlexibleSpaceBar(
-        background: (movie != null)?Stack(
-          children: [
-            Positioned.fill(
-              child: MovieDetailsAppBarImageView(
-                imageUrl: movie?.posterPath ?? "",
-              ),
-            ),
-            const Positioned.fill(
-              child: GradientView(),
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: MARGIN_MEDIUM_2, top: MARGIN_XXLARGE),
-                child: BackButtonView(() => onTapBack()),
-              ),
-            ),
-            const Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: EdgeInsets.only(
-                    top: MARGIN_XXLARGE + MARGIN_MEDIUM,
-                    right: MARGIN_MEDIUM_2),
-                child: SearchButtonView(),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    right: MARGIN_MEDIUM_2,
-                    left: MARGIN_MEDIUM_2,
-                    bottom: MARGIN_LARGE),
-                child: MovieDetailsAppBarInfoView(
-                  movie: movie,
+        background: (movie != null)
+            ? Stack(
+                children: [
+                  Positioned.fill(
+                    child: MovieDetailsAppBarImageView(
+                      imageUrl: movie?.posterPath ?? "",
+                    ),
+                  ),
+                  const Positioned.fill(
+                    child: GradientView(),
+                  ),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: MARGIN_MEDIUM_2, top: MARGIN_XXLARGE),
+                      child: BackButtonView(() => onTapBack()),
+                    ),
+                  ),
+                  const Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                          top: MARGIN_XXLARGE + MARGIN_MEDIUM,
+                          right: MARGIN_MEDIUM_2),
+                      child: SearchButtonView(),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          right: MARGIN_MEDIUM_2,
+                          left: MARGIN_MEDIUM_2,
+                          bottom: MARGIN_LARGE),
+                      child: MovieDetailsAppBarInfoView(
+                        movie: movie,
+                      ),
+                    ),
+                  )
+                ],
+              )
+            : const Center(
+                child: CircularProgressIndicator(
+                  color: PLAY_BUTTON_COLOR,
                 ),
               ),
-            )
-          ],
-        ) : const Center(child: CircularProgressIndicator(color: PLAY_BUTTON_COLOR,),),
       ),
     );
   }
