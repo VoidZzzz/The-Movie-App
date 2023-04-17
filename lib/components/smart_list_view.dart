@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class SmartHorizontalListView extends StatefulWidget {
@@ -15,7 +17,8 @@ class SmartHorizontalListView extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<SmartHorizontalListView> createState() => _SmartHorizontalListViewState();
+  State<SmartHorizontalListView> createState() =>
+      _SmartHorizontalListViewState();
 }
 
 class _SmartHorizontalListViewState extends State<SmartHorizontalListView> {
