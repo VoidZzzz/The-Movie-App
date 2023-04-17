@@ -105,36 +105,30 @@ class MovieModelImpl extends MovieModel {
   /// Database
 
   @override
-  Future<List<MovieVO>?> getNowPlayingMoviesFromDatabase() {
+  Stream<List<MovieVO>?> getNowPlayingMoviesFromDatabase() {
     getNowPlayingMovies(1);
     return mMovieDao
         .getAllMoviesEventStream()
-        .startWith(mMovieDao.getNowPlayingMoviesStream())
-        .combineLatest(mMovieDao.getNowPlayingMoviesStream(),
-            (event, movieList) => movieList)
-        .first;
+        .startWith(mMovieDao.getNowPlayingMovies())
+        .map((event) => mMovieDao.getNowPlayingMovies());
   }
 
   @override
-  Future<List<MovieVO>?> getPopularMoviesFromDatabase() {
-    getPopularMovies(3);
+  Stream<List<MovieVO>?> getPopularMoviesFromDatabase() {
+    getPopularMovies(1);
     return mMovieDao
         .getAllMoviesEventStream()
-        .startWith(mMovieDao.getPopularMoviesStream())
-        .combineLatest(
-            mMovieDao.getPopularMoviesStream(), (event, movieList) => movieList)
-        .first;
+        .startWith(mMovieDao.getPopularMovies())
+        .map((event) => mMovieDao.getPopularMovies());
   }
 
   @override
-  Future<List<MovieVO>?> getTopRatedMoviesFromDatabase() {
+  Stream<List<MovieVO>?> getTopRatedMoviesFromDatabase() {
     getTopRatedMovies(1);
     return mMovieDao
         .getAllMoviesEventStream()
-        .startWith(mMovieDao.getTopRatedMoviesStream())
-        .combineLatest(mMovieDao.getTopRatedMoviesStream(),
-            (event, movieList) => movieList)
-        .first;
+        .startWith(mMovieDao.getTopRatedMovies())
+        .map((event) => mMovieDao.getTopRatedMovies());
   }
 
   @override

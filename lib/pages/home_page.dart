@@ -48,11 +48,11 @@ class _HomePageState extends State<HomePage> {
     // });
 
     /// Now Playing Movies from DB
-    movieModel.getNowPlayingMoviesFromDatabase().then((movieList) {
+    movieModel.getNowPlayingMoviesFromDatabase().listen((movieList) {
       setState(() {
         nowPlayingMovies = movieList;
       });
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
 
@@ -66,11 +66,11 @@ class _HomePageState extends State<HomePage> {
     // });
 
     /// Popular Movies from DB
-    movieModel.getPopularMoviesFromDatabase().then((movieList) {
+    movieModel.getPopularMoviesFromDatabase().listen((movieList) {
       setState(() {
         popularMovies = movieList;
       });
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
 
@@ -84,11 +84,11 @@ class _HomePageState extends State<HomePage> {
     // });
 
     /// TopRated Movies from DB
-    movieModel.getTopRatedMoviesFromDatabase().then((movieList) {
+    movieModel.getTopRatedMoviesFromDatabase().listen((movieList) {
       setState(() {
         topRatedMovies = movieList;
       });
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint(error.toString());
     });
 
@@ -199,9 +199,7 @@ class _HomePageState extends State<HomePage> {
                       _navigateToMoviesDetailsScreen(context, movieId),
                   genreList: genres,
                   onChooseGenres: (genreId) {
-                    if (genreId != null) {
-                      _getMoviesByGenre(genreId);
-                    }
+                    _getMoviesByGenre(genreId!);
                   },
                 ),
                 const SizedBox(height: MARGIN_LARGE),
