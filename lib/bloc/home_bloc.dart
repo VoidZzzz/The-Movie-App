@@ -22,16 +22,16 @@ class HomeBloc extends ChangeNotifier {
 
   HomeBloc() {
     /// Now Playing Movies Database
-    mMoviemodel.getNowPlayingMoviesFromDatabase().then((movieList) {
+    mMoviemodel.getNowPlayingMoviesFromDatabase().listen((movieList) {
       mNowPlayingMoviesList = movieList;
       notifyListeners();
-    }).catchError((error) {});
+    }).onError((error) {});
 
     /// Popular Movies Database
-    mMoviemodel.getPopularMoviesFromDatabase().then((movieList) {
+    mMoviemodel.getPopularMoviesFromDatabase().listen((movieList) {
       mPopularMoviesList = movieList;
       notifyListeners();
-    }).catchError((error) {});
+    }).onError((error) {});
 
     /// Genres
     mMoviemodel.getGenres().then((genreList) {
@@ -42,10 +42,10 @@ class HomeBloc extends ChangeNotifier {
     }).catchError((error) {});
 
     /// TopRated Database
-    mMoviemodel.getTopRatedMoviesFromDatabase().then((movieList) {
+    mMoviemodel.getTopRatedMoviesFromDatabase().listen((movieList) {
       mTopRatedMoviesList = movieList;
       notifyListeners();
-    }).catchError((error) {});
+    }).onError((error) {});
 
     /// Actors
     mMoviemodel.getActors(1).then((actorList) {

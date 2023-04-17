@@ -36,21 +36,34 @@ class MovieDao {
     return getMovieBox().watch();
   }
 
-  Stream<List<MovieVO>> getNowPlayingMoviesStream() {
-    return Stream.value(getAllMovies()
-        .where((element) => element.isNowPlaying ?? false)
-        .toList());
+  List<MovieVO> getNowPlayingMoviesStream() {
+    if (getAllMovies() != null && (getAllMovies().isNotEmpty ?? false)) {
+      return getAllMovies()
+          .where((element) => element.isNowPlaying ?? false)
+          .toList();
+    } else {
+      return [];
+    }
   }
 
-  Stream<List<MovieVO>> getPopularMoviesStream() {
-    return Stream.value(
-        getAllMovies().where((element) => element.isPopular ?? false).toList());
+  List<MovieVO> getPopularMoviesStream() {
+    if (getAllMovies() != null && (getAllMovies().isNotEmpty ?? false)) {
+      return getAllMovies()
+          .where((element) => element.isPopular ?? false)
+          .toList();
+    } else {
+      return [];
+    }
   }
 
-  Stream<List<MovieVO>> getTopRatedMoviesStream() {
-    return Stream.value(getAllMovies()
-        .where((element) => element.isTopRated ?? false)
-        .toList());
+  List<MovieVO> getTopRatedMoviesStream() {
+    if (getAllMovies() != null && (getAllMovies().isNotEmpty ?? false)) {
+      return getAllMovies()
+          .where((element) => element.isTopRated ?? false)
+          .toList();
+    } else {
+      return [];
+    }
   }
 
   Box<MovieVO> getMovieBox() {
