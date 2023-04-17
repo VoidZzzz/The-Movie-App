@@ -17,6 +17,9 @@ class HomeBloc extends ChangeNotifier {
   /// Model
   MovieModel mMoviemodel = MovieModelImpl();
 
+  /// Page
+  int pageForNowPlayingMovies = 1;
+
   HomeBloc() {
     /// Now Playing Movies Database
     mMoviemodel.getNowPlayingMoviesFromDatabase().then((movieList) {
@@ -65,5 +68,10 @@ class HomeBloc extends ChangeNotifier {
 
   void onChooseGenres(int genreId){
     getMoviesByGenresAndRefresh(genreId);
+  }
+
+  void onNowPlayingMovieListEndReached(){
+    pageForNowPlayingMovies += 1;
+    mMoviemodel.getNowPlayingMovies(pageForNowPlayingMovies);
   }
 }

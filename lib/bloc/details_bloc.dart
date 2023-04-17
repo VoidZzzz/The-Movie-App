@@ -12,6 +12,7 @@ class MovieDetailsBloc extends ChangeNotifier{
   MovieVO? mMovie;
   List<ActorVO>? mActorsList;
   List<ActorVO>? mCreatorsList;
+  List<MovieVO>? mRelatedMovies;
 
   /// Model
   MovieModel mMovieModel = MovieModelImpl();
@@ -20,6 +21,7 @@ class MovieDetailsBloc extends ChangeNotifier{
     /// Movie Details
     mMovieModel.getMovieDetails(movieId).then((movie) {
       mMovie = movie!;
+      getRelatedMovies(movie.genres?.first.id ?? 0);
       notifyListeners();
     }).catchError((error){});
 
@@ -35,5 +37,12 @@ class MovieDetailsBloc extends ChangeNotifier{
       mCreatorsList = actorsAndCreators[1]!;
       notifyListeners();
     }).catchError((error){});
+  }
+
+  void getRelatedMovies(int genreId){
+    mMovieModel.getMoviesByGenre(genreId).then((relatedMovies) {
+      mRelatedMovies = relatedMovies;
+      notifyListeners();
+    });
   }
 }

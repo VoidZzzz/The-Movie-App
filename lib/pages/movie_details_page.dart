@@ -11,6 +11,7 @@ import 'package:the_movie_app/widgets/title_text.dart';
 import 'package:the_movie_app/resources/strings.dart';
 import '../data/data.vos/actor_vo.dart';
 import '../data/data.vos/movie_vo.dart';
+import '../widgets/title_and_horizontal_movie_list_view.dart';
 
 class MovieDetailsPage extends StatelessWidget {
   final int movieId;
@@ -73,6 +74,17 @@ class MovieDetailsPage extends StatelessWidget {
                                 actorList: creatorList)
                             : Container(),
                       ),
+                      const SizedBox(height: MARGIN_LARGE,),
+                      Selector<MovieDetailsBloc, List<MovieVO>>(
+                        selector: (context, bloc) => bloc.mRelatedMovies ?? [],
+                        builder: (context, relatedMovieList, child) => TitleAndHorizontalMovieListView(
+                            title: MOVIE_DETAILS_RELATED_MOVIES,
+                            onTapMovie: (movieId) =>
+                                _navigateToMoviesDetailsScreen(
+                                    context, movieId),
+                            nowPlayingMovies: relatedMovieList,
+                        onListEndReached: (){},),
+                      )
                     ],
                   ),
                 ),
@@ -82,6 +94,19 @@ class MovieDetailsPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _navigateToMoviesDetailsScreen(BuildContext context, int? movieId) {
+    if (movieId != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MovieDetailsPage(
+            movieId: movieId,
+          ),
+        ),
+      );
+    }
   }
 }
 
@@ -330,7 +355,7 @@ class MovieDetailsSliverAppBarView extends StatelessWidget {
                 children: [
                   Positioned.fill(
                     child: MovieDetailsAppBarImageView(
-                      imageUrl: movie?.posterPath ?? "",
+                      imageUrl: movie?.backDropPath ?? "",
                     ),
                   ),
                   const Positioned.fill(

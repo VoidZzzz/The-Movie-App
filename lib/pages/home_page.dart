@@ -20,6 +20,8 @@ import '../resources/strings.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/title_and_horizontal_movie_list_view.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -64,28 +66,37 @@ class HomePage extends StatelessWidget {
                   ),
                   const SizedBox(height: MARGIN_LARGE),
                   Selector<HomeBloc, List<MovieVO>>(
-                    selector: (context, bloc) => bloc.mNowPlayingMoviesList ?? [],
+                    selector: (context, bloc) =>
+                        bloc.mNowPlayingMoviesList ?? [],
                     builder: (context, nowPlayingMovieList, child) =>
-                        BestPopularMoviesAndSerialsSectionView(
+                        TitleAndHorizontalMovieListView(
+                            title: MAIN_SCREEN_BEST_POPULAR_MOVIE_AND_SERIALS,
                             onTapMovie: (movieId) =>
                                 _navigateToMoviesDetailsScreen(
                                     context, movieId),
-                            nowPlayingMovies: nowPlayingMovieList),
+                            nowPlayingMovies: nowPlayingMovieList,
+                        onListEndReached: () {
+                              var bloc = Provider.of<HomeBloc>(context, listen: false);
+                              bloc.onNowPlayingMovieListEndReached();
+                        },),
                   ),
                   const SizedBox(height: MARGIN_LARGE),
                   const CheckMovieShowTimesSectionView(),
                   const SizedBox(height: MARGIN_LARGE),
                   Selector<HomeBloc, List<GenreVO>>(
                     selector: (context, bloc) => bloc.mGenresList ?? [],
-                    builder: (context, genreList, child) => Selector<HomeBloc, List<MovieVO>>(
+                    builder: (context, genreList, child) =>
+                        Selector<HomeBloc, List<MovieVO>>(
                       selector: (context, bloc) => bloc.mMoviesByGenre ?? [],
-                      builder: (context, moviesByGenreList, child) => GenreSectionView(
+                      builder: (context, moviesByGenreList, child) =>
+                          GenreSectionView(
                         moviesByGenre: moviesByGenreList,
                         onTapMovie: (movieId) =>
                             _navigateToMoviesDetailsScreen(context, movieId),
                         genreList: genreList,
                         onChooseGenres: (genreId) {
-                          HomeBloc bloc = Provider.of<HomeBloc>(context, listen: false);
+                          HomeBloc bloc =
+                              Provider.of<HomeBloc>(context, listen: false);
                           bloc.onChooseGenres(genreId!);
                         },
                       ),
@@ -94,7 +105,8 @@ class HomePage extends StatelessWidget {
                   const SizedBox(height: MARGIN_LARGE),
                   Selector<HomeBloc, List<MovieVO>>(
                     selector: (context, bloc) => bloc.mTopRatedMoviesList ?? [],
-                    builder: (context, topRatedMovieList, child) => ShowCasesSection(
+                    builder: (context, topRatedMovieList, child) =>
+                        ShowCasesSection(
                       onTapShowCase: (movieId) =>
                           _navigateToMoviesDetailsScreen(context, movieId),
                       topRatedMovies: topRatedMovieList,
@@ -177,7 +189,7 @@ class GenreSectionView extends StatelessWidget {
               const EdgeInsets.only(top: MARGIN_MEDIUM_2, bottom: MARGIN_LARGE),
           child: HorizontalMovieListView(
             onTapMovie: (movieId) => onTapMovie(movieId),
-            movieList: moviesByGenre,
+            movieList: moviesByGenre, onListEndReached: (){},
           ),
         )
       ],
@@ -257,61 +269,6 @@ class ShowCasesSection extends StatelessWidget {
         ),
       ),
     ]);
-  }
-}
-
-class BestPopularMoviesAndSerialsSectionView extends StatelessWidget {
-  final Function onTapMovie;
-  final List<MovieVO>? nowPlayingMovies;
-
-  const BestPopularMoviesAndSerialsSectionView(
-      {super.key, required this.onTapMovie, required this.nowPlayingMovies});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-            margin: const EdgeInsets.only(left: MARGIN_MEDIUM_2),
-            child: const TitleText(MAIN_SCREEN_BEST_POPULAR_MOVIE_AND_SERIALS)),
-        const SizedBox(height: MARGIN_MEDIUM_2),
-        HorizontalMovieListView(
-            onTapMovie: (movieId) => onTapMovie(movieId),
-            movieList: nowPlayingMovies),
-      ],
-    );
-  }
-}
-
-class HorizontalMovieListView extends StatelessWidget {
-  final Function(int?) onTapMovie;
-  final List<MovieVO>? movieList;
-
-  const HorizontalMovieListView(
-      {super.key, required this.onTapMovie, required this.movieList});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: MOVIE_LIST_HEIGHT,
-      child: (movieList != null)
-          ? ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: MARGIN_MEDIUM_2),
-              itemCount: movieList?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: () => onTapMovie(movieList?[index].id),
-                  child: MovieView(
-                    movie: movieList?[index],
-                  ),
-                );
-              })
-          : const Center(
-              child: CircularProgressIndicator(),
-            ),
-    );
   }
 }
 
