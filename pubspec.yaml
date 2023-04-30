@@ -64,6 +64,10 @@ dev_dependencies:
   build_runner:
   retrofit_generator: 4.2.0
   hive_generator:
+  integration_test:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
 
 
 # For information on the generic Dart part of this file, see the

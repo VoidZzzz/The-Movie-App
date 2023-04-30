@@ -20,10 +20,18 @@ class HomeBloc extends ChangeNotifier {
   /// Page
   int pageForNowPlayingMovies = 1;
 
-  HomeBloc() {
+  HomeBloc([MovieModel? movieModel]) {
+    /// Set Mock Data For Test
+    if (movieModel != null) {
+      mMoviemodel = movieModel;
+    }
+
     /// Now Playing Movies Database
     mMoviemodel.getNowPlayingMoviesFromDatabase().listen((movieList) {
       mNowPlayingMoviesList = movieList;
+      if(mNowPlayingMoviesList?.isNotEmpty ?? false){
+        mNowPlayingMoviesList?.sort((a, b) => a.id! - b.id!);
+      }
       notifyListeners();
     }).onError((error) {});
 
@@ -38,7 +46,9 @@ class HomeBloc extends ChangeNotifier {
       mGenresList = genreList;
 
       /// Movies By Genres
-      getMoviesByGenresAndRefresh(mGenresList!.first.id!);
+      if (mGenresList?.isNotEmpty ?? false) {
+        getMoviesByGenresAndRefresh(mGenresList?.first.id ?? 0);
+      }
     }).catchError((error) {});
 
     /// TopRated Database
@@ -66,11 +76,11 @@ class HomeBloc extends ChangeNotifier {
     }).catchError((error) {});
   }
 
-  void onChooseGenres(int genreId){
+  void onChooseGenres(int genreId) {
     getMoviesByGenresAndRefresh(genreId);
   }
 
-  void onNowPlayingMovieListEndReached(){
+  void onNowPlayingMovieListEndReached() {
     pageForNowPlayingMovies += 1;
     mMoviemodel.getNowPlayingMovies(pageForNowPlayingMovies);
   }

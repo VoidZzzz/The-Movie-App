@@ -30,8 +30,10 @@ class TitleAndHorizontalMovieListView extends StatelessWidget {
         ),
         const SizedBox(height: MARGIN_MEDIUM_2),
         HorizontalMovieListView(
-            onTapMovie: (movieId) => onTapMovie(movieId),
-            movieList: nowPlayingMovies,onListEndReached: onListEndReached,),
+          onTapMovie: (movieId) => onTapMovie(movieId),
+          movieList: nowPlayingMovies,
+          onListEndReached: onListEndReached,
+        ),
       ],
     );
   }
@@ -43,7 +45,10 @@ class HorizontalMovieListView extends StatelessWidget {
   final Function onListEndReached;
 
   const HorizontalMovieListView(
-      {super.key, required this.onTapMovie, required this.movieList, required this.onListEndReached});
+      {super.key,
+      required this.onTapMovie,
+      required this.movieList,
+      required this.onListEndReached});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +73,12 @@ class HorizontalMovieListView extends StatelessWidget {
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () => onTapMovie(movieList?[index].id),
-                  child: MovieView(movie: movieList?[index]),
+                  child: MovieView(
+                    movie: movieList?[index],
+                    onTapMovie: () {
+                      onTapMovie(movieList?[index].id);
+                    },
+                  ),
                 );
               },
               onListEndReached: () => onListEndReached(),

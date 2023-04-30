@@ -70,15 +70,16 @@ class HomePage extends StatelessWidget {
                         bloc.mNowPlayingMoviesList ?? [],
                     builder: (context, nowPlayingMovieList, child) =>
                         TitleAndHorizontalMovieListView(
-                            title: MAIN_SCREEN_BEST_POPULAR_MOVIE_AND_SERIALS,
-                            onTapMovie: (movieId) =>
-                                _navigateToMoviesDetailsScreen(
-                                    context, movieId),
-                            nowPlayingMovies: nowPlayingMovieList,
-                        onListEndReached: () {
-                              var bloc = Provider.of<HomeBloc>(context, listen: false);
-                              bloc.onNowPlayingMovieListEndReached();
-                        },),
+                      title: MAIN_SCREEN_BEST_POPULAR_MOVIE_AND_SERIALS,
+                      onTapMovie: (movieId) =>
+                          _navigateToMoviesDetailsScreen(context, movieId),
+                      nowPlayingMovies: nowPlayingMovieList,
+                      onListEndReached: () {
+                        var bloc =
+                            Provider.of<HomeBloc>(context, listen: false);
+                        bloc.onNowPlayingMovieListEndReached();
+                      },
+                    ),
                   ),
                   const SizedBox(height: MARGIN_LARGE),
                   const CheckMovieShowTimesSectionView(),
@@ -189,7 +190,8 @@ class GenreSectionView extends StatelessWidget {
               const EdgeInsets.only(top: MARGIN_MEDIUM_2, bottom: MARGIN_LARGE),
           child: HorizontalMovieListView(
             onTapMovie: (movieId) => onTapMovie(movieId),
-            movieList: moviesByGenre, onListEndReached: (){},
+            movieList: moviesByGenre,
+            onListEndReached: () {},
           ),
         )
       ],

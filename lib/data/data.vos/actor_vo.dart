@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:the_movie_app/persistence/hive_constants.dart';
+import '../../persistence/hive_constants.dart';
 import 'movie_vo.dart';
 
 part 'actor_vo.g.dart';
@@ -69,6 +69,18 @@ class ActorVO {
       this.character,
       this.creditId,
       this.order);
+
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ActorVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
 
   factory ActorVO.fromJson(Map<String, dynamic> json) =>
       _$ActorVOFromJson(json);

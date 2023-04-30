@@ -15,6 +15,7 @@ import '../widgets/title_and_horizontal_movie_list_view.dart';
 
 class MovieDetailsPage extends StatelessWidget {
   final int movieId;
+
   const MovieDetailsPage({super.key, required this.movieId});
 
   @override
@@ -74,16 +75,19 @@ class MovieDetailsPage extends StatelessWidget {
                                 actorList: creatorList)
                             : Container(),
                       ),
-                      const SizedBox(height: MARGIN_LARGE,),
+                      const SizedBox(
+                        height: MARGIN_LARGE,
+                      ),
                       Selector<MovieDetailsBloc, List<MovieVO>>(
                         selector: (context, bloc) => bloc.mRelatedMovies ?? [],
-                        builder: (context, relatedMovieList, child) => TitleAndHorizontalMovieListView(
-                            title: MOVIE_DETAILS_RELATED_MOVIES,
-                            onTapMovie: (movieId) =>
-                                _navigateToMoviesDetailsScreen(
-                                    context, movieId),
-                            nowPlayingMovies: relatedMovieList,
-                        onListEndReached: (){},),
+                        builder: (context, relatedMovieList, child) =>
+                            TitleAndHorizontalMovieListView(
+                          title: MOVIE_DETAILS_RELATED_MOVIES,
+                          onTapMovie: (movieId) =>
+                              _navigateToMoviesDetailsScreen(context, movieId),
+                          nowPlayingMovies: relatedMovieList,
+                          onListEndReached: () {},
+                        ),
                       )
                     ],
                   ),
@@ -112,6 +116,7 @@ class MovieDetailsPage extends StatelessWidget {
 
 class AboutFilmSectionView extends StatelessWidget {
   final MovieVO? movieVO;
+
   const AboutFilmSectionView({super.key, required this.movieVO});
 
   @override
@@ -176,6 +181,7 @@ class AboutFilmInfoView extends StatelessWidget {
 class TrailerSection extends StatelessWidget {
   final List<String> genreList;
   final String storyLine;
+
   const TrailerSection(
       {super.key, required this.storyLine, required this.genreList});
 
@@ -256,6 +262,7 @@ class MovieDetailsScreenButtonView extends StatelessWidget {
 
 class StoryLineView extends StatelessWidget {
   final String storyLine;
+
   const StoryLineView({super.key, required this.storyLine});
 
   @override
@@ -314,6 +321,7 @@ class MovieTimeAndGenreView extends StatelessWidget {
 
 class GenreChipView extends StatelessWidget {
   final String genreText;
+
   const GenreChipView(this.genreText, {super.key});
 
   @override
@@ -338,6 +346,7 @@ class GenreChipView extends StatelessWidget {
 class MovieDetailsSliverAppBarView extends StatelessWidget {
   final Function onTapBack;
   final MovieVO? movie;
+
   const MovieDetailsSliverAppBarView(
       {super.key, required this.movie, required this.onTapBack});
 
@@ -404,6 +413,7 @@ class MovieDetailsSliverAppBarView extends StatelessWidget {
 
 class MovieDetailsAppBarInfoView extends StatelessWidget {
   final MovieVO? movie;
+
   const MovieDetailsAppBarInfoView({super.key, required this.movie});
 
   @override
@@ -458,6 +468,7 @@ class MovieDetailsAppBarInfoView extends StatelessWidget {
 
 class MovieDetailsYearView extends StatelessWidget {
   final String year;
+
   const MovieDetailsYearView({super.key, required this.year});
 
   @override
@@ -496,6 +507,7 @@ class SearchButtonView extends StatelessWidget {
 
 class BackButtonView extends StatelessWidget {
   Function onTapBack;
+
   BackButtonView(this.onTapBack);
 
   @override
@@ -518,6 +530,7 @@ class BackButtonView extends StatelessWidget {
 
 class MovieDetailsAppBarImageView extends StatelessWidget {
   final String imageUrl;
+
   const MovieDetailsAppBarImageView({super.key, required this.imageUrl});
 
   @override

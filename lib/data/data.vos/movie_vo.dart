@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:the_movie_app/data/data.vos/production_company_vo.dart';
 import 'package:the_movie_app/data/data.vos/production_country_vo.dart';
 import 'package:the_movie_app/data/data.vos/spoken_language_vo.dart';
-import 'package:the_movie_app/persistence/hive_constants.dart';
+import '../../persistence/hive_constants.dart';
 import 'collection_vo.dart';
 import 'genre_vo.dart';
 
@@ -177,6 +177,18 @@ class MovieVO {
             .join(",") ??
         "";
   }
+
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is MovieVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          title == other.title;
+
+  @override
+  int get hashCode => id.hashCode ^ title.hashCode;
 
   @override
   String toString() {

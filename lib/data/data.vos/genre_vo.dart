@@ -1,7 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:the_movie_app/persistence/hive_constants.dart';
-
+import '../../persistence/hive_constants.dart';
 part 'genre_vo.g.dart';
 
 @JsonSerializable()
@@ -17,6 +16,17 @@ class GenreVO{
   String? name;
 
   GenreVO({required this.id, required this.name});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GenreVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name;
+
+  @override
+  int get hashCode => id.hashCode ^ name.hashCode;
 
   factory GenreVO.fromJson(Map<String, dynamic> json) => _$GenreVOFromJson(json);
 
